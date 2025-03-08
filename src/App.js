@@ -125,7 +125,7 @@ export default function App() {
     .join('-')
     .slice(0, -1)
 
-  const gamePlayButtons = [
+  const gamePlayButtons = gameStarted ? [
     <GetNewProblemButton
       disabled={recentCorrectAnswer}
       clickHandler={getNewProblem}
@@ -134,9 +134,14 @@ export default function App() {
     <CheckAnswerButton
       disabled={recentCorrectAnswer}
       key={crypto.randomUUID()}
-    />,
-  ]
-  const startButton = <StartButton clickHandler={() => setGameStarted(true)} />
+    />
+  ] : null
+
+  const startButton = !gameStarted && (
+    <StartButton clickHandler={() => setGameStarted(true)} />
+  )
+
+ 
   function showStates() {
     const states = {
       mathProblem,
@@ -200,36 +205,35 @@ export default function App() {
                
         Not: Görevi tamamlamak için *sadece* aşağıdaki return deyiminin içine küçük bir kod yazmanız gerekmektedir. Bu veya başka bir dosyada yazmanız gereken başka bir kod yok
 */
+return (
+  <div className='wrapper'>
+    <h1>Mat-a-Matik</h1>
+    {isHydrated && (
+      <form onSubmit={handleSubmit}>
+        <label>
+          <div className='problem-container'>{mathProblem.string}</div>
+          <input
+            type='number'
+            name='value'
+            placeholder='?'
+            onChange={updateResponse}
+            value={currentResponse}
+            className={inputClass}
+            autoComplete='off'
+            required
+          />
+        </label>
 
-  return (
-    <div className='wrapper'>
-      <h1>Mat-a-Matik</h1>
-      {isHydrated && (
-        <form onSubmit={handleSubmit}>
-          <label>
-            <div className='problem-container'>{mathProblem.string}</div>
-            <input
-              type='number'
-              name='value'
-              placeholder='?'
-              onChange={updateResponse}
-              value={currentResponse}
-              className={inputClass}
-              autoComplete='off'
-              required
-            />
-          </label>
+        <div className={`message-container ${messageClass}`}>
+          {answerStatus}
+        </div>
 
-          <div className={`message-container ${messageClass}`}>
-            {answerStatus}
-          </div>
-
-          <div className='button-container'>
-            {gamePlayButtons}
-            {startButton}
-          </div>
-        </form>
-      )}
-    </div>
-  )
+        <div className='button-container'>
+          {gamePlayButtons}
+          {startButton}
+        </div>
+      </form>
+    )}
+  </div>
+)
 }
